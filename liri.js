@@ -1,15 +1,33 @@
 var request = require('request');
-var twitter = require('twitter');
+var Twitter = require('twitter');
 var spotify = require('spotify');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 var twitterkeys = require('./keys.js');
 
-
+var command = process.argv;
 
 // Command: node liri.js my-tweets
     // This will show your last 20 tweets and when they were created at in your terminal/bash window.
-    
+    var client = new Twitter(twitterkeys.twitterKeys);
+    var params = {
+        "screen_name": 'joelvanderhoof1',
+        "count": '1'
+    };
+
+    client.get('statuses/user_timeline', params, function(error, tweets, response) {
+//   if(error) {
+//       throw error;
+//       //console.log(JSON.stringify(error));
+//   }
+  console.log(typeof tweets);  // The favorites. 
+  //console.log(response);  // Raw response object. 
+  var content = JSON.stringify(tweets);
+  fs.appendFile('log.txt', "content", 'utf8', (err) => {
+  if (err) throw err;
+  console.log('The "data to append" was appended to file!');
+});
+});
 
 // Command:  node liri.js spotify-this-song '<song name here>'
     // This will show the following information about the song in your terminal/bash window
