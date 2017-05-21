@@ -57,3 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
+# more stuff to ignore
+node_modules
+.DS_Store
+
