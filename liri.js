@@ -5,38 +5,55 @@ var fs = require('fs');
 var bodyParser = require('body-parser');
 var twitterkeys = require('./keys.js');
 
-var command = process.argv;
+var command = process.argv[2];
 
 // Command: node liri.js my-tweets
     // This will show your last 20 tweets and when they were created at in your terminal/bash window.
+if(command === 'my-tweets') {
     var client = new Twitter(twitterkeys.twitterKeys);
     var params = {
         "screen_name": 'joelvanderhoof1',
-        "count": '1'
+        "count": '20'
     };
 
-    client.get('statuses/user_timeline', params, function(error, tweets, response) {
-//   if(error) {
-//       throw error;
-//       //console.log(JSON.stringify(error));
-//   }
-  console.log(typeof tweets);  // The favorites. 
-  //console.log(response);  // Raw response object. 
-  var content = JSON.stringify(tweets);
-  fs.appendFile('log.txt', "content", 'utf8', (err) => {
-  if (err) throw err;
-  console.log('The "data to append" was appended to file!');
-});
-});
-
-// Command:  node liri.js spotify-this-song '<song name here>'
+    client.get('statuses/user_timeline', params, function(err, tweets, response) {
+        if(err) throw err;
+        var count = 1;
+        for (var i=tweets.length-1; i>=0; i--) {
+            console.log("Tweet " + count + ":" + tweets[i].text); 
+            count++;
+        }
+    });
+}
+// Command:  node liri.js spotify-this-song '<song and artist name here>'
     // This will show the following information about the song in your terminal/bash window
-    // Artist(s)
-    // The song's name
-    // A preview link of the song from Spotify
-    // The album that the song is from
+if(command === 'spotify-this-song') {
+    var queryTrack = '';
+    for (i=3; i<process.argv.length; i++){
+        queryTrack += process.argv[i] + ' ';
+    }
+    console.log("queryTrack: " + queryTrack);
     // if no song is provided then your program will default to
     // "The Sign" by Ace of Base
+    if(queryTrack=== '') {
+        queryTrack = 'The Sign Ace of Base';
+    }
+    spotify.search({ type: 'track', query: queryTrack }, function(err, data) {
+    if (err) {
+        console.log('Error occurred: ' + err);
+    }
+    //console.log(data);
+    // Artist(s)
+    console.log('Artist: ' + data.tracks.items[0].album.artists[0].name);
+    // The song's name
+    console.log('Song title: ' + data.tracks.items[0].name);
+    // A preview link of the song from Spotify
+    console.log('Preview link: ' + data.tracks.items[0].preview_url);
+    // The album that the song is from
+    console.log('Album: ' + data.tracks.items[0].album.name);
+    });
+}
+
 
 
 // Command:  node liri.js movie-this '<movie name here>'
