@@ -80,32 +80,50 @@ else if(command === 'movie-this') {
     for (i=3; i<process.argv.length; i++){
         queryMovie += process.argv[i] + ' ';
     }
-        // If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
-        if(queryMovie=== '') {
-            queryMovie = 'Mr. Nobody';
-        }
-    
-    queryMovie = encodeURI(queryMovie);
-    var queryURL = 'http://www.omdbapi.com/?apikey=a144706d&s=' + queryMovie + '&r=json';
+    // If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
+    if (queryMovie=== '') {
+        queryMovie = 'Mr. Nobody';
+    }
 
-    request.get(queryURL).on('response', function(response) {
-        //    * Title of the movie.
-        console.log('Title: ' + response.Title);
+
+    var options = { 
+        method: 'GET',
+        url: 'http://www.omdbapi.com/',
+        qs: { 
+            apikey: '40e9cece', 
+            t: queryMovie
+        },
+        headers: 
+        { 'postman-token': 'dcb5f691-7c74-b560-a712-e161b82e4b06',
+            'cache-control': 'no-cache',
+            'content-type': 'application/json; charset=UTF-8' },
+        body: '{\n  consumer_key: \'MOnO7pbs2fCi937BV8lQQjdtG\',\n  consumer_secret: \'fxn6lu6pf4HrdpAT59td9VMfK6UIkfcGCsotHFvvRUgSLfVfDs\',\n  access_token_key: \'\t866367295685246976-PUK1Lp5zqGggykZcknMT0AeOivZzWvp\',\n  access_token_secret: \'4ZBRDx0HRfrdtOL5QbzAWX9wcasq2lfE71KjJGMwVgsOq\',\n}' };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        var resObj = JSON.parse(body);
+        console.log(typeof body);
+        console.log("This is the body: " + body);
+
+        // Title of the movie.
+        console.log('Title: ' + resObj.Title);
         //    * Year the movie came out.
-        console.log('Year released: ' + response.Year);
+        console.log('Year released: ' + resObj.Year);
         //    * IMDB Rating of the movie.
-        console.log('IMDB rating: ' + response.imdbRating);
+        console.log('IMDB rating: ' + resObj.imdbRating);
         //    * Country where the movie was produced.
-        console.log('Country: ' + response.Country);
+        console.log('Country: ' + resObj.Country);
         //    * Language of the movie.
-        console.log('Language: ' + response.Language);
+        console.log('Language: ' + resObj.Language);
         //    * Plot of the movie.
-        console.log('Plot: ' + response.Plot);
+        console.log('Plot: ' + resObj.Plot);
         //    * Actors in the movie.
-        console.log('Actors: ' + response.Actors);
+        console.log('Actors: ' + resObj.Actors);
         //    * Rotten Tomatoes URL.
-        console.log('Rotten Tomatoes Score: ' + response.Ratings[1]);   
-    }); 
+        if (resObj.Ratings[1].Value != undefined) {
+            console.log('Rotten Tomatoes Score: ' + resObj.Ratings[1].Value);   
+        }
+    });
 }
 
 
