@@ -6,6 +6,11 @@ var bodyParser = require('body-parser');
 var twitterkeys = require('./keys.js');
 
 var command = process.argv[2];
+fs.appendFile('log.txt', command + ", ", (err) => {
+  if (err) throw err;
+  console.log('The "data to append" was appended to file!');
+});
+
 var queryTrack = '';
 
 function runCommands(command) {
@@ -87,9 +92,6 @@ function runCommands(command) {
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
             var resObj = JSON.parse(body);
-            console.log(typeof body);
-            console.log("This is the body: " + body);
-
             // Title of the movie.
             console.log('Title: ' + resObj.Title);
             //    * Year the movie came out.
